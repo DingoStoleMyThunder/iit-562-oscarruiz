@@ -170,12 +170,12 @@ function isFullHouse(array){
 	var result = false;
 	var counter = 0;
 
-	var isValid3OfAKing = false;
+	var isValid3OfAKind = false;
 	var isValidMatch = false;
 
 	//Check if there are 3 of a Kind
 	if(isThreeOfAKind(array)){
-		isValid3OfAKing = true;
+		isValid3OfAKind = true;
 	}
 
 	//Check the remaining for a pair
@@ -184,7 +184,7 @@ function isFullHouse(array){
 	}
 
 	//Check for valid matches
-	if(isValid3OfAKing && isValidMatch){
+	if(isValid3OfAKind && isValidMatch){
 		result = true;
 	}
 	return result;	
