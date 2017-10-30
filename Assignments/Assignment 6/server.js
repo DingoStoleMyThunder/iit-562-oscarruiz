@@ -36,33 +36,6 @@ function reminderIDCounter(){
 	return reminderIDs++;
 }
 
-/*
-//Connect to MongoDB
-mongoose.connect('mongodb://localhost/oruiz-week7', { useMongoClient: true });
-
-//Check DB connection
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'DB connection error:'));
-db.once('open', function() {
-  console.log("Connected correctly to DB server.");
-});
-
-//Initialize sequence
-autoIncrement.initialize(db);
-
-//Define DB schema
-var PokerHandSchema = mongoose.Schema({
-	cards: [{ 
-		rank: String,
-		suit: String
-	}]
-});
-
-//Define model and custom auto-increment field
-PokerHandSchema.plugin(autoIncrement.plugin, { model: 'PokerHand', field: 'id' });
-//Map model to the schema
-var PokerHand = mongoose.model("PokerHand", PokerHandSchema);
-*/
 
 
 //Initialize server
@@ -74,15 +47,6 @@ app.use(bodyParser.json());
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
-
-app.get("/users", function(request, response){
-	response.status(200).send(userList);
-});
-
-app.get("/reminders", function(request, response){
-	response.status(200).send(reminderList);
-});
-
 
 //Create POST request to insert poker hand data
 app.post("/users", function(request, response){
@@ -133,7 +97,7 @@ app.delete("/users/:userId", function(request, response){
 				var counter = userRemindersIndex.length;
 				for(var i = userRemindersIndex.length -1; i >= 0; i--){
 					var indexValue = userRemindersIndex[i];
-					console.log("Delete: " + indexValue);
+					//console.log("Delete: " + indexValue);
 					reminderList.splice(indexValue, 1);
 				}
 
@@ -210,6 +174,8 @@ app.get("/users/:userId/reminders", function(request, response){
 	response.set('Content-Type', 'application/json');
 	//Get the ID from the request 
 	var searchUserId = request.params.userId;
+	var searchParam = request.query.title;
+	var hasData = false;
 
 	//Check if data was submitted
 	if(searchUserId == undefined){
@@ -232,9 +198,27 @@ app.get("/users/:userId/reminders", function(request, response){
 				var tmpList = [];
 				for(var i = 0; i < userRemindersIndex.length; i++){
 					var indexValue = userRemindersIndex[i];
-					tmpList.push(formatReminderOuput(reminderList[indexValue]));
+
+					if(searchParam == undefined){
+						tmpList.push(formatReminderOuput(reminderList[indexValue]));
+						hasData = true;
+					}else if(searchParam !== ''){
+
+						if(reminderList[indexValue].title == searchParam){
+							//console.log("title match")
+							tmpList.push(formatReminderOuput(reminderList[indexValue]));
+							hasData = true;
+						}
+					}
 				}
-				response.status(200).send(tmpList);
+
+				if(hasData){
+					response.status(200).send(tmpList);
+				}
+				else{
+					var message = { "error": 404, "message": "No reminders with title: '" + searchParam + "' for user with ID: " + searchUserId + " were found" };
+					response.status(404).send(message);		
+				}
 			}
 			else{
 				var message = { "error": 404, "message": "No reminders for user with ID: " + searchUserId + " were found" };
@@ -313,7 +297,7 @@ app.delete("/users/:userId/reminders", function(request, response){
 				var counter = userRemindersIndex.length;
 				for(var i = userRemindersIndex.length -1; i >= 0; i--){
 					var indexValue = userRemindersIndex[i];
-					console.log("Delete: " + indexValue);
+					//console.log("Delete: " + indexValue);
 					reminderList.splice(indexValue, 1);
 				}
 
@@ -375,8 +359,7 @@ app.delete("/users/:userId/reminders/:reminderId", function(request, response){
 function findUserListIndex(id){
 	for(var i = 0; i < userList.length; i++){
 		if(userList[i].id == id){
-			console.log(userList[i]);
-			//return userList[i];
+			//console.log(userList[i]);
 			return i;
 		}
 	}
@@ -391,7 +374,7 @@ function findAllUserReminderListIndex(id){
 		}
 	}
 
-	console.log("Reminder IDs: " + userRemindersList + " for user: " + id);
+	//console.log("Reminder IDs: " + userRemindersList + " for user: " + id);
 	return userRemindersList;
 }
 
