@@ -18,7 +18,5 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "4.15.2",
-    //"mongoose": "^4.12.2",
-    //"mongoose-auto-increment": "^5.0.1"
   }
 }
