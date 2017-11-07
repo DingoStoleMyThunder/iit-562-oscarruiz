@@ -1,0 +1,48 @@
+extends layout
+block content
+	main(role='main')
+		div(class='jumbotron')
+			div(class='col-sm-8 mx-auto')
+				h1 All Reminders
+				p This example is a quick exercise to illustrate how the navbar and its contents work. Some navbars extend the width of the viewport, others are confined within a .container.
+				p
+					a(class='btn btn-primary' href='#' role='button') View
+
+				table(class='table table-striped table-dark table-hover')
+					thead
+						tr
+							th(scope='col') Title
+							th(scope='col') Action
+					tbody
+
+					each reminder in reminder_list
+						tr
+							td #{reminder.title}
+							td 
+								- var reminderID = reminder.id;
+								- var hello = 'hi';
+								span
+									form(id='view-reminder-form-' + reminderID name='view-reminder-form-' + reminderID class='view-reminder-form' style='display:inline')
+										input(type='hidden' name='reminder-id' id='reminder-id' value=reminderID)
+										span(style='padding-right: 5px')
+											a(class='badge badge-pill badge-primary get-reminder-link' id='get-reminder-link-' + reminderID name='get-reminder-link-' + reminderID role='button' type='button' href='#' data-toggle='modal' data-target='#viewReminderModal' data-reminder-view-id=reminderID) View Details
+									form(id='delete-reminder-form-' + reminderID name='delete-reminder-form-' + reminderID class='delete-reminder-form' style='display:inline')
+										input(type='hidden' name='reminder-id' id='reminder-id' value=reminderID)
+										span(style='padding-right: 5px')
+											a(class='badge badge-pill badge-primary delete-reminder-link' id='delete-reminder-link-' + reminderID name='delete-reminder-link-' + reminderID role='button' type='button' href='#' data-toggle='modal' data-target='#viewReminderModal' data-reminder-delete-id=reminderID) Delete
+					else
+						li No users found
+
+				div(class='modal' tabindex='-1' role='dialog' id='viewReminderModal' aria-labelledby='view-modal-title' aria-hidden='true')
+					div(class='modal-dialog' role='document')
+						div(class='modal-content')
+							div(class='modal-header')
+								h5(class='modal-title' id='reminder-title') Reminder Title
+								button(type='button' class='close' data-dismiss='modal' arial-label='Close')
+									span(aria-hidden='true') &times;
+							div(class='modal-body')
+								div(class='form-group')
+									p(id='reminder-description')
+									p(id='reminder-created')
+							div(class='modal-footer')
+								button(type='button' class='btn btn-secondary' data-dismiss='modal') Close

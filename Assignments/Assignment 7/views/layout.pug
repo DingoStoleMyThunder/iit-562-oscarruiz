@@ -1,0 +1,55 @@
+doctype html
+html(lang="en")
+	head
+		title Oscar Ruiz - Assignment 7
+		link(rel='stylesheet', href='http://getbootstrap.com/dist/css/bootstrap.min.css')
+		link(rel='stylesheet', href='http://getbootstrap.com/docs/4.0/examples/navbars/navbar.css')
+		script(type='text/javascript' src='/js/jquery.js')
+		script(src='http://getbootstrap.com/assets/js/vendor/popper.min.js')
+		script(src='http://getbootstrap.com/dist/js/bootstrap.min.js')
+		script(type='text/javascript' src='/js/create.js')
+	body
+		nav(class='navbar navbar-expand-lg navbar-dark bg-dark')
+			div(class='container')
+				a(class='navbar-brand' href='/') Forget-Me-NOT!
+				button(class='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbarsExample07' aria-controls='navbarsExample07' aria-expanded='false' aria-label='Toggle navigation')
+					span(class='navbar-toggler-icon')
+
+				div(class='collapse navbar-collapse' id='navbarsExample07')
+					ul(class='navbar-nav mr-auto')
+						li(class='nav-item active')
+							a(class='nav-link' href='/') Home
+								span(class='sr-only') (current)
+						li(class='nav-item') 
+							a(class='nav-link' href='#' data-target='#createUserModal' role='button'  data-toggle='modal') Create User
+						li(class='nav-item')
+							a(class='nav-link disabled' href='#') Disabled
+						li(class='nav-item dropdown')
+							a(class='nav-link dropdown-toggle' href='http://google.com' id='dropdown07' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false') Dropdown
+							div(class='dropdown-menu' aria-labelledby='dropdown07')
+								a(class='dropdown-item' href='#') Action 1
+								a(class='dropdown-item' href='#') Action 2
+								a(class='dropdown-item' href='#') Action 3
+					form(class='form-inline my-2 my-md-0')
+						input(class='form-control' type='text' placeholder='Search' aria-label='Search')
+		block content
+		div(class='modal' tabindex='-1' role='dialog' id='createUserModal')
+			div(class='modal-dialog' role='document')
+				div(class='modal-content')
+					div(class='alert alert-success' role='alert' id='userSuccess' style='display:none') Successfully created a user!
+					div(class='alert alert-danger' role='alert' id='userFailure' style='display:none') Unable to create a user!
+					form(id='create-user' name='create-user')
+						div(class='modal-header')
+							h5(class='modal-title') Create User
+							button(type='button' class='close' data-dismiss='modal' arial-label='Close')
+								span(aria-hidden='true') &times;
+						div(class='modal-body')
+							div(class='form-group')
+								label(for='create-user-name') Name
+								input(type='text' class='form-control' id='create-user-name' name='create-user-name' placeholder='Enter Name' value='Test User')
+							div(class='form-group')
+								label(for='description') Email
+								input(type='email' class='form-control' id='create-user-email' name='create-user-email' placeholder='Enter Email' value='test@test.com')
+						div(class='modal-footer')
+							button(type='submit' class='btn btn-primary' id='create-user-submit-btn') Submit
+							button(type='button' class='btn btn-secondary' data-dismiss='modal') Close

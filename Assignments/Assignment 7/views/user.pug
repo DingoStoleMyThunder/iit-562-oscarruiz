@@ -1,0 +1,63 @@
+extends layout
+block content
+	main(role='main')
+		div(class='jumbotron')
+			div(class='col-sm-8 mx-auto')
+				h1 #{user.name}'s Details
+				p This example is a quick exercise to illustrate how the navbar and its contents work. Some navbars extend the width of the viewport, others are confined within a .container.
+				p
+					a(class='btn btn-primary' href='#' role='button') View
+
+				table(class='table table-striped table-dark table-hover')
+					thead
+						tr
+							th(scope='col') Name
+							th(scope='col') Email
+							th(scope='col') Action
+					tbody
+						tr
+							td #{user.name}
+							td #{user.email}
+							td 
+								- var userID = user.id;
+								span(style='padding-right: 5px')
+									a(class='badge badge-pill badge-primary' role='button' href='/users/' + userID + '/reminders') View Reminders
+								span(style='padding-right: 5px')
+									a(class='badge badge-pill badge-primary' role='button' href='#' data-toggle='modal' data-target='#createReminderModal') Create Reminder
+								form(id='delete-all-reminders' name='delete-all-reminders' style='display:inline')
+									span(style='padding-right: 5px')
+										a(class='badge badge-pill badge-primary' role='button' id='delete-all-reminders-button' type='submit' href='#' data-toggle='modal' data-target='#viewReminderModal') Delete All Reminders
+				div(class='modal' tabindex='-1' role='dialog' id='createReminderModal')
+					div(class='modal-dialog' role='document')
+						div(class='modal-content')
+							div(class='alert alert-success' role='alert' id='reminderSuccess' style='display:none') Successfully created a reminder!
+							div(class='alert alert-danger' role='alert' id='reminderFailure' style='display:none') Unable to create a reminder!
+							form(id='create-reminder' name='create-reminder')
+								div(class='modal-header')
+									h5(class='modal-title') Create Reminder
+									button(type='button' class='close' data-dismiss='modal' arial-label='Close')
+										span(aria-hidden='true') &times;
+								div(class='modal-body')
+									div(class='form-group')
+										label(for='title') Title
+										input(type='text' class='form-control' id='title' name='title' placeholder='Enter Title' value='test title')
+									div(class='form-group')
+										label(for='description') Description
+										input(type='text' class='form-control' id='description' name='description' placeholder='Enter Description' value='Test Description')
+								div(class='modal-footer')
+									button(type='submit' class='btn btn-primary' id='create-reminder-submit-btn') Submit
+									button(type='button' class='btn btn-secondary' data-dismiss='modal') Close
+				div(class='modal' tabindex='-1' role='dialog' id='viewReminderModal' aria-labelledby='view-modal-title' aria-hidden='true')
+					div(class='modal-dialog' role='document')
+						div(class='modal-content')
+							div(class='modal-header')
+								h5(class='modal-title' id='reminder-title') Reminder Title
+								button(type='button' class='close' data-dismiss='modal' arial-label='Close')
+									span(aria-hidden='true') &times;
+							div(class='modal-body')
+								div(class='form-group')
+									p(id='reminder-description')
+									p(id='reminder-created')
+							div(class='modal-footer')
+								button(type='button' class='btn btn-secondary' data-dismiss='modal') Close
+
