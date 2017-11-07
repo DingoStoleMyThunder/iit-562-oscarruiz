@@ -3,34 +3,37 @@ block content
 	main(role='main')
 		div(class='jumbotron' style='padding:1rem 1rem')
 			div(class='col-sm-8 mx-auto')
-				h1 #{user.name}'s Details
-				div
-					nav(aria-label='breadcrumb' role='navigation')
-						ol(class='breadcrumb' style='padding:0.5rem 0rem')
-							li(class='breadcrumb-item')
-								a(href='/') Home
-							li(class='breadcrumb-item')
-								a(href='/users') All Users
-							li(class='breadcrumb-item active' aria-current='page') #{user.name}
-				table(class='table table-striped table-dark table-hover')
-					thead
-						tr
-							th(scope='col') Name
-							th(scope='col') Email
-							th(scope='col') Action
-					tbody
-						tr
-							td #{user.name}
-							td #{user.email}
-							td 
-								- var userID = user.id;
-								span(style='padding-right: 5px')
-									a(class='badge badge-pill badge-primary' role='button' href='/users/' + userID + '/info/reminders') View Reminders
-								span(style='padding-right: 5px')
-									a(class='badge badge-pill badge-primary' id='create-reminder-link' role='button' href='#' data-toggle='modal' data-target='#createReminderModal' data-user-id=userID) Create Reminder
-								form(id='delete-all-reminders' name='delete-all-reminders' style='display:inline')
+				if user.name == undefined
+					div(class='alert alert-danger' role='alert') #{user.message}
+				else
+					h1 #{user.name}'s Details
+					div
+						nav(aria-label='breadcrumb' role='navigation')
+							ol(class='breadcrumb' style='padding:0.5rem 0rem')
+								li(class='breadcrumb-item')
+									a(href='/') Home
+								li(class='breadcrumb-item')
+									a(href='/users') All Users
+								li(class='breadcrumb-item active' aria-current='page') #{user.name}
+					table(class='table table-striped table-dark table-hover')
+						thead
+							tr
+								th(scope='col') Name
+								th(scope='col') Email
+								th(scope='col') Action
+						tbody
+							tr
+								td #{user.name}
+								td #{user.email}
+								td 
+									- var userID = user.id;
 									span(style='padding-right: 5px')
-										a(class='badge badge-pill badge-primary' role='button' id='delete-all-reminders-button' type='submit' href='#' data-toggle='modal' data-target='#viewReminderModal' data-user-id=userID) Delete All Reminders
+										a(class='badge badge-pill badge-primary' role='button' href='/users/' + userID + '/info/reminders') View Reminders
+									span(style='padding-right: 5px')
+										a(class='badge badge-pill badge-primary' id='create-reminder-link' role='button' href='#' data-toggle='modal' data-target='#createReminderModal' data-user-id=userID) Create Reminder
+									form(id='delete-all-reminders' name='delete-all-reminders' style='display:inline')
+										span(style='padding-right: 5px')
+											a(class='badge badge-pill badge-primary' role='button' id='delete-all-reminders-button' type='submit' href='#' data-toggle='modal' data-target='#viewReminderModal' data-user-id=userID) Delete All Reminders
 				div(class='modal' tabindex='-1' role='dialog' id='createReminderModal')
 					div(class='modal-dialog' role='document')
 						div(class='modal-content')

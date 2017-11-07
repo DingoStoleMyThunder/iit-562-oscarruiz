@@ -86,8 +86,8 @@ app.get("/users/:userId/info/", function(req, res){
 			//console.log(body);
 			//Parse the string to a JSON object we can use
 			user_info = JSON.parse(body);
-			userName = user_info.name;
-			console.log("this is username " + userName);
+			//userName = getUserName(searchUserId);
+			console.log("this is username " + getUserName(searchUserId));
 
 			res.render('user-info', { user: user_info } );
 	});
@@ -110,9 +110,9 @@ app.get("/users/:userId/info/reminders", function(req, res){
 			console.log(body);
 			//Parse the string to a JSON object we can use
 			allReminders = JSON.parse(body);
-			console.log("this is username2 " + userName);
+			console.log("this is username2 " + getUserName(searchUserId));
 
-			res.render('all-reminders', { reminder_list : allReminders, userID: searchUserId, currentUser: userName });
+			res.render('all-reminders', { reminder_list : allReminders, userID: searchUserId, currentUser: getUserName(searchUserId) });
 	});
 });
 
@@ -258,7 +258,7 @@ app.post("/users/:userId/reminders", function(request, response){
 		//Check if User was not found
 		if(listIndex == undefined){
 			//Return no User data found error message
-			var message = { "error": 404, "message": "User with ID: " + searchUserId + " was not found" };
+			var message = { "error": 404, "message": "User: " + getUserName(searchUserId) + " was not found" };
 			response.status(404).send(message);		
 		}
 		//User data found
@@ -350,14 +350,14 @@ app.get("/users/:userId/reminders", function(request, response){
 				//No data found
 				else{
 					//Return no reminder data found for this search
-					var message = { "error": 404, "message": "No reminders with title: '" + searchParam + "' for user with ID: " + searchUserId + " were found" };
+					var message = { "error": 404, "message": "No reminders with title: '" + searchParam + "' for user: " + getUserName(searchUserId) + " were found" };
 					response.status(404).send(message);		
 				}
 			}
 			//No Reminders found
 			else{
 				//Return no reminder data found
-				var message = { "error": 404, "message": "No reminders for user with ID: " + searchUserId + " were found" };
+				var message = { "error": 404, "message": "No reminders for user: " + getUserName(searchUserId) + " were found" };
 				response.status(404).send(message);		
 			}
 		}
@@ -403,7 +403,7 @@ app.get("/users/:userId/reminders/:reminderId", function(request, response){
 				//Check if a Reminder was not found
 				if(itemIndex == undefined){
 					//Return no Reminder data found for the provided Reminder ID error message
-					var message = { "error": 404, "message": "No reminder with ID: " + searchReminderId + " was found for user with ID: " + searchUserId + "" };
+					var message = { "error": 404, "message": "No reminder with ID: " + searchReminderId + " was found for user: " + userName + "" };
 					response.status(404).send(message);
 				}
 				//Reminder was found
@@ -417,7 +417,7 @@ app.get("/users/:userId/reminders/:reminderId", function(request, response){
 			//No Reminders were found
 			else{
 				//Return no Reminder data found error message
-				var message = { "error": 404, "message": "No reminders for user with ID: " + searchUserId + " were found" };
+				var message = { "error": 404, "message": "No reminders for user: " + getUserName(searchUserId) + " were found" };
 				response.status(404).send(message);		
 			}
 		}
@@ -471,7 +471,7 @@ app.delete("/users/:userId/reminders", function(request, response){
 			//User had no Reminders
 			else{
 				//Return no reminder data found error message
-				var message = { "error": 404, "message": "No reminders for user with ID: " + searchUserId + " were found" };
+				var message = { "error": 404, "message": "No reminders for user: " + getUserName(searchUserId) + " were found" };
 				response.status(404).send(message);		
 			}
 		}
@@ -517,7 +517,7 @@ app.delete("/users/:userId/reminders/:reminderId", function(request, response){
 				//Check if a Reminder was not found
 				if(itemIndex == undefined){
 					//Return no Reminder data found for the provided Reminder ID error message
-					var message = { "error": 404, "message": "No reminder with ID: " + searchReminderId + " was found for user with ID: " + searchUserId + "" };
+					var message = { "error": 404, "message": "No reminder with ID: " + searchReminderId + " was found for user: " + userName + "" };
 					response.status(404).send(message);
 				}
 				//Reminder found
@@ -533,7 +533,7 @@ app.delete("/users/:userId/reminders/:reminderId", function(request, response){
 			//No User Reminders found
 			else{
 				//Return no reminder data found error message
-				var message = { "error": 404, "message": "No reminders for user with ID: " + searchUserId + " were found" };
+				var message = { "error": 404, "message": "No reminders for user: " + getUserName(searchUserId) + " were found" };
 				response.status(404).send(message);		
 			}
 		}
@@ -597,4 +597,11 @@ function formatReminderOuput(item){
 	return { "title" : item.title, "description" : item.description, "created" : item.created };
 }
 
+function getUserName(id){
+	for(var i = 0; i < userList.length; i++){
+		if(userList[i].id == id){
+			return userList[i].name;
+		}
+	}
+}
 
