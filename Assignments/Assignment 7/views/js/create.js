@@ -20,17 +20,21 @@ $(function() {
 	  		dataType: 'json',
             data: JSON.stringify({ user: JSONObj }),
             success: function(response) {
-                $('#userSuccess').text("Successfully created a reminder");
+                $('#userSuccess').text("Successfully created a user!");
                 $('#userSuccess').show();
-        		$('#userSuccess').delay(5000).fadeOut();
+        		$('#userSuccess').delay(4000).fadeOut();
 
-        		if(urlPath == "/"){
+        		if(urlPath == "/users"){
         			$('#create-user-submit-btn').attr("disabled", "disabled");
-        			setTimeout(function(){ location.reload(); }, 3000);
+        			setTimeout(function(){ location.reload(); }, 4000);
         		}
+                else{
+                    $('#create-user-submit-btn').attr("disabled", "disabled");
+                    setTimeout(function(){ $('#create-user-submit-btn').removeAttr("disabled"); }, 4200);
+                }
             },
             error: function(response) {
-                $('#userFailure').text("ERROR: " + response.message);
+                $('#userFailure').text("ERROR: " + response.responseJSON.message);
                 $('#userFailure').show();
         		$('#userFailure').delay(10000).fadeOut();
             }
@@ -47,12 +51,14 @@ $(function() {
 		var $form = $( this ),
 			userName = $form.find( "input[name='title']" ).val(),
 			userEmail = $form.find( "input[name='description']" ).val(),
-			url = $form.attr( "action" );
+            userId = $('#create-reminder-link').attr('data-user-id');
+
+        console.log(userId);
 
 		var JSONObj = { "title": userName, "description": userEmail } ;
 
         $.ajax({
-            url: referrerUrl + 'reminders',
+            url: '/users/' + userId + '/reminders',//referrerUrl + 'reminders',
             method: 'POST',
             contentType: 'application/json',
 	  		dataType: 'json',
@@ -66,7 +72,7 @@ $(function() {
     			setTimeout(function(){ $('#create-reminder-submit-btn').removeAttr("disabled"); }, 4500);
             },
             error: function(response) {
-                $('#reminderFailure').text("ERROR: " + response.message);
+                $('#reminderFailure').text("ERROR: " + response.responseJSON.message);
                 $('#reminderFailure').show();
         		$('#reminderFailure').delay(10000).fadeOut();
             }
@@ -87,14 +93,15 @@ $(function() {
 		var data = $(this).serialize(); 
 
 		var $form = $( this ),
-			reminderId = $form.find( "input[name='reminder-id']" ).val();
+			reminderId = $form.find( "input[name='reminder-id']" ).val(),
+            userId = $('#get-reminder-link-' + reminderId).attr('data-reminder-view-user-id');
 
 		//console.log(url);
 
 		//var JSONObj = { "title": userName, "description": userEmail } ;
 
         $.ajax({
-            url: './reminders/' + reminderId,
+            url: '/users/' + userId + '/reminders/' + reminderId,
             method: 'GET',
             contentType: 'application/json',
             data: data,
@@ -105,8 +112,10 @@ $(function() {
         		$('#reminder-created').text("Created on: " + response.created);
             },
             error: function(response) {
+                $('#reminder-description').text('');
                 $('#reminder-title').text("ERROR");
-                $('#reminder-description').text(response.message);
+                $('#reminder-description').text(response.responseJSON.message);
+                $('#reminder-created').text('');
             }
         });
     });
@@ -125,25 +134,26 @@ $(function() {
 		//var data = $(this).serialize(); 
 
 		var $form = $( this ),
-			reminderId = $form.find( "input[name='reminder-id']" ).val();
+			reminderId = $form.find( "input[name='reminder-id']" ).val(),
+            userId = $('#delete-reminder-link-' + reminderId).attr('data-reminder-delete-user-id');
 
 		//console.log(url);
 
 		//var JSONObj = { "title": userName, "description": userEmail } ;
 
         $.ajax({
-            url: './reminders/' + reminderId,
+            url: '/users/' + userId + '/reminders/' + reminderId,
             method: 'DELETE',
             contentType: 'application/json',
 	  		dataType: 'json',
             success: function(response) {
                 $('#reminder-title').text("Success!");
                 $('#reminder-description').text("Successfully deleted a reminder");
-        		setTimeout(function(){ location.reload(); }, 3000);
+        		setTimeout(function(){ location.reload(); }, 2000);
             },
             error: function(response) {
                 $('#reminder-title').text("ERROR");
-                $('#reminder-description').text(response.message);
+                $('#reminder-description').text(response.responseJSON.message);
             }
         });
     });
@@ -161,13 +171,14 @@ $(function() {
         var referrerUrl = $(location).attr("href");
 
 		var $form = $( this ),
-			reminderId = $form.find( "input[name='reminder-id']" ).val();
+			reminderId = $form.find( "input[name='reminder-id']" ).val(),
+            userId = $('#delete-all-reminders-button').attr('data-user-id');
 
 
 		//var JSONObj = { "title": userName, "description": userEmail } ;
 
         $.ajax({
-            url: referrerUrl + 'reminders',
+            url: '/users/' + userId + '/reminders',
             method: 'DELETE',
             contentType: 'application/json',
 	  		dataType: 'json',
@@ -178,7 +189,7 @@ $(function() {
             },
             error: function(response) {
                 $('#reminder-title').text("ERROR!");
-                $('#reminder-description').text(response.message);
+                $('#reminder-description').text(response.responseJSON.message);
             }
         });
     });
@@ -218,52 +229,63 @@ $(function() {
             },
             error: function(response) {
                 $('#user-name-display').text("ERROR");
-                $('#user-email-display').text(response.message);
+                $('#user-email-display').text(response.responseJSON.message);
         		setTimeout(function(){ location.reload(); }, 3000);
             }
         });
     });
 
+    //Search Reminder Info Functions
+    $('#search-reminder-form').on('submit', function(event) {
+        //Stop form from submitting normally
+        event.preventDefault();
+        //var referrerUrl = $(location).attr("href");
+        var data = $(this).serialize(); 
+
+        var $form = $( this ),
+            searchText = $form.find( "input[name='title']" ).val(),
+            userId = $('#title').attr('data-reminder-search-user-id');
+
+
+        $.ajax({
+            url: '/users/' + userId + '/reminders/',
+            method: 'GET',
+            contentType: 'application/json',
+            data: data,
+            dataType: 'json',
+            success: function(response) {
+                if(response.length > 0){
+                    var searchResults = '';
+                    for(var i = 0; i < response.length; i++){
+
+                        searchResults += '<p><b>Title:</b> ' + response[i].title + '<p>'
+                            + '<p><b>description:</b> ' + response[i].description + '<p>'
+                            + '<p><b>Created:</b> ' + response[i].created + '<p>';
+
+                        if (i !== response.length -1){
+                            searchResults += '<hr>';
+                        }
+                        $('#search-modal-result-content').html('<p>hey ' + i + '</p><p>yo ' + i);
+                    }
+                        $('#search-result-title').html('Search Results for <i>' + searchText + '</i>')
+                        $('#search-modal-result-content').html(searchResults);
+                }
+            },
+            error: function(response) {
+                        $('#search-result-title').html('Search Results for <i>' + searchText + '</i>')
+                        $('#search-modal-result-content').html(response.responseJSON.message);
+                        console.log(response);
+            }
+        });
+    });
 
 });
 
 $(document).ready(function(){
 	$('#create-user-submit-btn').removeAttr("disabled");
+    var urlPath = $(location).attr("pathname");
+    if(urlPath.match(/\/users\/\d+\/info\/reminders/)){
+        $('#search-layout-box').show();
+    }
 });
-/*function myFunction() {
-	$( "#create-user" ).submit(function( event ) {
 
-		console.log("TEST");
-	 
-	  // Stop form from submitting normally
-	  event.preventDefault();
-	 
-	  // Get some values from elements on the page:
-	  var $form = $( this ),
-	    userName = $form.find( "input[name='name']" ).val(),
-	    userEmail = $form.find( "input[name='email']" ).val(),
-	    url = $form.attr( "action" );
-
-	  var JSONObj = { "user": { "name": userName, "email": userEmail } };
-	 
-	  // Send the data using post
-	  //var posting = $.post( url, { user: { name: userName, email: userEmail } } );
-
-	  var posting = $.ajax({
-	  	url: '/users',
-	  	method: 'POST',
-		contentType: 'application/json',
-	  	//data: { "user": JSONObj },
-	  	data: JSON.stringify(JSONObj),
-	  	dataType: 'json'
-	  });
-	 
-	  // Put the results in a div
-	  posting.done(function( data ) {
-	    //var content = $( data ).find( "name" );
-	    //$( "#result" ).empty().append( content );
-	    console.log(data);
-	  });
-	});
-}
-*/

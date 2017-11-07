@@ -2,6 +2,8 @@ var express = require('express');
 var assert = require('assert');
 var util = require('util');
 var bodyParser = require('body-parser');
+//var $ = require('jQuery');
+var request = require("request");
 var app = express();
 //Array to hold list of users
 var userList = [];
@@ -11,6 +13,8 @@ var reminderList = [];
 var userIDs = 0;
 //Counter variable for reminder IDs
 var reminderIDs = 0;
+
+var userName = '';
 
 //User object
 function User(id, name, email){
@@ -61,13 +65,55 @@ app.get("/", function(request, response){
 	response.render('index', { user_list: userList });
 });
 
-app.get("/users/create", function(request, response){
-	response.render('createUser');
+
+app.get("/users", function(request, response){
+	response.render('all-users', { user_list: userList });
 });
 
+app.get("/users/:userId/info/", function(req, res){
+	//Get the ID from the request 
+	var searchUserId = req.params.userId;
+	var user_info = { };
+	var url = req.protocol + '://' + req.headers.host + '/users/' + searchUserId;
 
-app.get("/users/:userId/reminders/create", function(request, response){
-	response.render('createReminder');
+	console.log(url);
+	request({
+		uri: url,
+		method: "GET",
+	},
+		function(error, response, body){
+			//console.log(error);
+			//console.log(body);
+			//Parse the string to a JSON object we can use
+			user_info = JSON.parse(body);
+			userName = user_info.name;
+			console.log("this is username " + userName);
+
+			res.render('user-info', { user: user_info } );
+	});
+});
+
+//response.render('all-reminders', { reminder_list : tmpList });
+app.get("/users/:userId/info/reminders", function(req, res){
+	//Get the ID from the request 
+	var searchUserId = req.params.userId;
+	var allReminders = [];
+	var url = req.protocol + '://' + req.headers.host + '/users/' + searchUserId + '/reminders';
+
+	console.log(url);
+	request({
+		uri: url,
+		method: "GET",
+	},
+		function(error, response, body){
+			console.log(error);
+			console.log(body);
+			//Parse the string to a JSON object we can use
+			allReminders = JSON.parse(body);
+			console.log("this is username2 " + userName);
+
+			res.render('all-reminders', { reminder_list : allReminders, userID: searchUserId, currentUser: userName });
+	});
 });
 
 
@@ -183,8 +229,9 @@ app.get("/users/:userId", function(request, response){
 		else{
 			//Return valid response with formatted User object output
 			//response.status(200).send(formatUserOutput(userList[listIndex]));
+			response.status(200).send(userList[listIndex]);
 
-			response.render('user', { user: userList[listIndex] });
+			//response.render('user', { user: userList[listIndex] });
 		}
 	}
 });
@@ -297,8 +344,8 @@ app.get("/users/:userId/reminders", function(request, response){
 				//Check if data was found
 				if(hasData){
 					//Data found; Return the new temporary list of reminders found for this User
-					//response.status(200).send(tmpList);
-					response.render('allReminders', { reminder_list : tmpList });
+					response.status(200).send(tmpList);
+					//response.render('all-reminders', { reminder_list : tmpList });
 				}
 				//No data found
 				else{
