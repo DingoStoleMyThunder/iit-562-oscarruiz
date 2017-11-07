@@ -2,7 +2,6 @@ var express = require('express');
 var assert = require('assert');
 var util = require('util');
 var bodyParser = require('body-parser');
-//var $ = require('jQuery');
 var request = require("request");
 var app = express();
 //Array to hold list of users
@@ -13,8 +12,6 @@ var reminderList = [];
 var userIDs = 0;
 //Counter variable for reminder IDs
 var reminderIDs = 0;
-
-var userName = '';
 
 //User object
 function User(id, name, email){
@@ -49,7 +46,6 @@ function reminderIDCounter(){
 //Initialize server
 app.set('port', (process.env.PORT || 5000));
 // view engine setup
-//app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(__dirname + "/views"));
 app.set('view engine', 'pug');
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -60,58 +56,62 @@ app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
 
-
+//Create GET request for the home page
 app.get("/", function(request, response){
 	response.render('index', { user_list: userList });
 });
 
-
+//Create GET request to display all the users in the system
 app.get("/users", function(request, response){
+	//Send the array list of users in the response
 	response.render('all-users', { user_list: userList });
 });
 
+//Create GET request to display an individual user's information
+//based on a supplied user ID
 app.get("/users/:userId/info/", function(req, res){
 	//Get the ID from the request 
 	var searchUserId = req.params.userId;
+	//User info object
 	var user_info = { };
+	//Generate GET request URL for API call
 	var url = req.protocol + '://' + req.headers.host + '/users/' + searchUserId;
 
-	console.log(url);
+	//Server API GET call to retrieve a user's information
 	request({
 		uri: url,
 		method: "GET",
 	},
 		function(error, response, body){
-			//console.log(error);
-			//console.log(body);
 			//Parse the string to a JSON object we can use
 			user_info = JSON.parse(body);
-			//userName = getUserName(searchUserId);
-			console.log("this is username " + getUserName(searchUserId));
 
+			//Send response to the user info page
 			res.render('user-info', { user: user_info } );
 	});
 });
 
-//response.render('all-reminders', { reminder_list : tmpList });
+//Create GET request to display all of the reminders
+//for an particular user
 app.get("/users/:userId/info/reminders", function(req, res){
 	//Get the ID from the request 
 	var searchUserId = req.params.userId;
+	//Array to hold reminder information
 	var allReminders = [];
+	//Generate GET request URL for API call
 	var url = req.protocol + '://' + req.headers.host + '/users/' + searchUserId + '/reminders';
 
-	console.log(url);
+	//Server API GET call to retrieve all the user's reminders
 	request({
 		uri: url,
 		method: "GET",
 	},
 		function(error, response, body){
-			console.log(error);
-			console.log(body);
 			//Parse the string to a JSON object we can use
 			allReminders = JSON.parse(body);
-			console.log("this is username2 " + getUserName(searchUserId));
 
+			//Send response to the all reminders page
+			//along with the user's ID and name
 			res.render('all-reminders', { reminder_list : allReminders, userID: searchUserId, currentUser: getUserName(searchUserId) });
 	});
 });
@@ -183,29 +183,16 @@ app.delete("/users/:userId", function(request, response){
 					//Remove Reminder object from the list based on the index provided
 					reminderList.splice(indexValue, 1);
 				}
-
-				//Return No Content response with message
-				//var message = { "message": "No Content"};
-		        //response.status(204).send(message);
-			}/*
-			//User had no reminders
-			else{
-				//Return no reminder data found error message
-				var message = { "warning": 404, "message": "No reminders for user with ID: " + searchUserId + " were found" };
-				response.status(404).send(message);		
-			}*/
-				//Return No Content response with message
-				var message = { "message": "No Content"};
-		        response.status(204).send(message);
-
+			}
+			//Return No Content response with message
+			var message = { "message": "No Content"};
+	        response.status(204).send(message);
 		}
 	}
 });
 
 //Create GET request to retrieve individual user information
 app.get("/users/:userId", function(request, response){
-	//Set content type header
-	//response.set('Content-Type', 'application/json');
 	//Get the ID from the request 
 	var searchUserId = request.params.userId;
 	//Check if ID was submitted
@@ -227,11 +214,8 @@ app.get("/users/:userId", function(request, response){
 		}
 		//User data found
 		else{
-			//Return valid response with formatted User object output
-			//response.status(200).send(formatUserOutput(userList[listIndex]));
+			//Return valid response with User object output
 			response.status(200).send(userList[listIndex]);
-
-			//response.render('user', { user: userList[listIndex] });
 		}
 	}
 });
@@ -242,7 +226,6 @@ app.post("/users/:userId/reminders", function(request, response){
 	response.set('Content-Type', 'application/json');
 	//Get the ID from the request 
 	var searchUserId = request.params.userId;
-	console.log(request.body.reminder);
 
 	//Check if reminder data was submitted
 	if(request.body.reminder == undefined){
@@ -279,8 +262,6 @@ app.post("/users/:userId/reminders", function(request, response){
 
 //Create GET request to retrieve all reminders for the provided user
 app.get("/users/:userId/reminders", function(request, response){
-	//Set content type header
-	//response.set('Content-Type', 'application/json');
 	//Get the ID from the request 
 	var searchUserId = request.params.userId;
 	//Get the search data from the query parameter
@@ -323,7 +304,6 @@ app.get("/users/:userId/reminders", function(request, response){
 					//Check if search query parameter was not found
 					if(searchParam == undefined){
 						//No search provided; push all the reminders found for this user to a temp list
-						//tmpList.push(formatReminderOuput(reminderList[indexValue]));
 						tmpList.push(reminderList[indexValue]);
 						//Data was found flag
 						hasData = true;
@@ -333,7 +313,6 @@ app.get("/users/:userId/reminders", function(request, response){
 						//Check if the title of the reminder matches the search query parameter provided
 						if(reminderList[indexValue].title == searchParam){
 							//Match found; push the reminder found to a temp list
-							//tmpList.push(formatReminderOuput(reminderList[indexValue]));
 							tmpList.push(reminderList[indexValue]);
 							//Data was found flag
 							hasData = true;
@@ -345,7 +324,6 @@ app.get("/users/:userId/reminders", function(request, response){
 				if(hasData){
 					//Data found; Return the new temporary list of reminders found for this User
 					response.status(200).send(tmpList);
-					//response.render('all-reminders', { reminder_list : tmpList });
 				}
 				//No data found
 				else{
@@ -366,8 +344,6 @@ app.get("/users/:userId/reminders", function(request, response){
 
 //Create GET request to retrieve individual Reminder, based on an ID value, for the User provided
 app.get("/users/:userId/reminders/:reminderId", function(request, response){
-	//Set content type header
-	//response.set('Content-Type', 'application/json');
 	//Get the User ID from the request 
 	var searchUserId = request.params.userId;
 	//Get the Reminder ID from the request
@@ -409,9 +385,7 @@ app.get("/users/:userId/reminders/:reminderId", function(request, response){
 				//Reminder was found
 				else{
 					//Return formatted Reminder output
-					response.status(200).send(formatReminderOuput(reminderList[itemIndex]));
-					console.log(reminderList[itemIndex]);
-					//response.render('reminderDetails', { reminder : reminderList[itemIndex] });					
+					response.status(200).send(formatReminderOuput(reminderList[itemIndex]));					
 				}
 			}
 			//No Reminders were found
@@ -597,6 +571,7 @@ function formatReminderOuput(item){
 	return { "title" : item.title, "description" : item.description, "created" : item.created };
 }
 
+//Function used to retrieve a User's name based on a provided ID
 function getUserName(id){
 	for(var i = 0; i < userList.length; i++){
 		if(userList[i].id == id){
