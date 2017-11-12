@@ -1,0 +1,165 @@
+//During the test the env variable is set to test
+process.env.NODE_ENV = 'test';
+
+//Require the dev-dependencies
+let chai = require('chai');
+let chaiHttp = require('chai-http');
+let server = require('../server');
+let should = chai.should();
+var userList = [];
+
+chai.use(chaiHttp);
+//Our parent block
+describe('Users', () => {
+    beforeEach((done) => { //Before each test we empty the database
+		for(var i = userList.length; i > 0; i--){
+			userList.pop();
+		}
+		done();
+    });
+
+    beforeEach((withDummyData) => { //Add dummy data before specific tests
+		let user = { user : {
+			name: "John Doe",
+			email: "test@test.com"
+			}
+		}
+		chai.request(server)
+			.post('/users')
+			.send(user)
+			.end((err, res) => {
+				res.should.have.status(200);
+				res.body.should.be.a('object');
+				res.body.should.have.property('id');
+				userList.push(res.body.id);
+				withDummyData();
+			});
+	});
+
+/*
+    afterEach((withDummyData) => { //Add dummy data before specific tests
+			chai.request(server)
+				.delete('/users/0')
+				.end((err, res) => {
+					res.should.have.status(204);
+					withDummyData();
+				});
+	});
+*/
+	/*
+	* Test the /GET route
+	*/
+	describe('/GET/:id users', () => {
+		it('it should GET a users by the given id', (withDummyData) => {
+			chai.request(server)
+				.get('/users/0')
+				.end((err, res) => {
+					res.should.have.status(200);
+					res.body.should.be.a('object');
+					res.body.should.have.property('name');
+					res.body.should.have.property('email');
+					res.body.name.should.eql('John Doe');
+					res.body.email.should.eql('test@test.com');
+					withDummyData();
+				});
+		});
+	});
+
+	/*
+	* Test the /GET route
+	*/
+	describe('/GET/:id users', () => {
+		it('it should not GET a users by the given id', (done) => {
+			chai.request(server)
+				.get('/users/999999999999999999')
+				.end((err, res) => {
+					res.should.have.status(404);
+					res.body.should.be.a('object');
+					res.body.should.have.property('error');
+					res.body.should.have.property('message');
+					res.body.error.should.eql(404);
+					done();
+				});
+		});
+	});
+
+	/*
+	* Test the /POST route
+	*/
+	describe('/POST users', () => {
+		it('it should POST a user', (done) => {
+			let user = { user : {
+				name: "John Doe",
+				email: "test@test.com"
+				}
+			}
+			chai.request(server)
+				.post('/users')
+				.send(user)
+				.end((err, res) => {
+					res.should.have.status(200);
+					res.body.should.be.a('object');
+					res.body.should.have.property('id');
+					done();
+				});
+		});
+	});
+
+	/*
+	* Test the /POST route
+	*/
+	describe('/POST users', () => {
+		it('it should not POST a user', (done) => {
+			let user = {
+			}
+			chai.request(server)
+				.post('/users')
+				.send(user)
+				.end((err, res) => {
+					res.should.have.status(400);
+					res.body.should.be.a('object');
+					res.body.should.have.property('error');
+					res.body.should.have.property('message');
+					res.body.error.should.eql(400);
+					res.body.message.should.eql('No data was provided');
+					done();
+				});
+		});
+	});
+
+	/*
+	* Test the /DELETE/:id route
+	*/
+	describe('/DELETE/:id user', () => {
+		it('it should DELETE a users by the given id', (withDummyData) => {
+			chai.request(server)
+				.delete('/users/0')
+				.end((err, res) => {
+					res.should.have.status(204);
+					withDummyData();
+				});
+		});
+	});
+
+
+	/*
+	* Test the /DELETE/:id route
+	*/
+	describe('/DELETE/:id user', () => {
+		it('it should not DELETE a users by the given id', (withDummyData) => {
+			chai.request(server)
+				.delete('/users/9999999999')
+				.end((err, res) => {
+					res.should.have.status(404);
+					res.body.should.be.a('object');
+					res.body.should.have.property('error');
+					res.body.should.have.property('message');
+					res.body.error.should.eql(404);
+					withDummyData();
+				});
+		});
+	});
+
+
+
+});

@@ -1,0 +1,52 @@
+doctype html
+html(lang="en")
+	head
+		title Oscar Ruiz - Assignment 7
+		link(rel='stylesheet', href='http://getbootstrap.com/dist/css/bootstrap.min.css')
+		link(rel='stylesheet', href='http://getbootstrap.com/docs/4.0/examples/navbars/navbar.css')
+		link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css')
+		script(type='text/javascript' src='/js/jquery.js')
+		script(src='http://getbootstrap.com/assets/js/vendor/popper.min.js')
+		script(src='http://getbootstrap.com/dist/js/bootstrap.min.js')
+		script(type='text/javascript' src='/js/create.js')
+	body
+		nav(class='navbar navbar-expand-lg navbar-dark bg-dark')
+			div(class='container')
+				a(class='navbar-brand' href='/') Forget-Me-NOT!
+				button(class='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbarsExample07' aria-controls='navbarsExample07' aria-expanded='false' aria-label='Toggle navigation')
+					span(class='navbar-toggler-icon')
+
+				div(class='collapse navbar-collapse' id='navbarsExample07')
+					ul(class='navbar-nav mr-auto')
+						li(class='nav-item active')
+							a(class='nav-link' href='/') Home
+								span(class='sr-only') (current)
+						li(class='nav-item') 
+							a(class='nav-link' href='#' data-target='#createUserModal' role='button'  data-toggle='modal') Create User
+					div(class='col-lg-6' style='float:right;display:none' id='search-layout-box')
+						form(class='form-inline' id='search-reminder-form')
+							div(class='form-group')
+								input(type='text' id='title' name='title' data-reminder-search-user-id=userID class='form-control' value='test title3' placeholder='Reminder Title Search...' aria-label='Reminder Title Search...')
+							button(type='submit' class='btn btn-primary' data-toggle='modal' data-target='#searchReminderModal') Go!
+
+		block content
+		div(class='modal' tabindex='-1' role='dialog' id='createUserModal')
+			div(class='modal-dialog' role='document')
+				div(class='modal-content')
+					div(class='alert alert-success' role='alert' id='userSuccess' style='display:none') Successfully created a user!
+					div(class='alert alert-danger' role='alert' id='userFailure' style='display:none') Unable to create a user!
+					form(id='create-user' name='create-user')
+						div(class='modal-header')
+							h5(class='modal-title') Create User
+							button(type='button' class='close' data-dismiss='modal' arial-label='Close')
+								span(aria-hidden='true') &times;
+						div(class='modal-body')
+							div(class='form-group')
+								label(for='create-user-name') Name
+								input(type='text' class='form-control' id='create-user-name' name='create-user-name' placeholder='Enter Name' value='Test User')
+							div(class='form-group')
+								label(for='description') Email
+								input(type='email' class='form-control' id='create-user-email' name='create-user-email' placeholder='Enter Email' value='test@test.com')
+						div(class='modal-footer')
+							button(type='submit' class='btn btn-primary' id='create-user-submit-btn') Submit
+							button(type='button' class='btn btn-secondary' data-dismiss='modal') Close

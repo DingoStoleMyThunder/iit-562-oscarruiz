@@ -1,0 +1,74 @@
+extends layout
+block content
+	main(role='main')
+		div(class='jumbotron' style='padding:1rem 1rem')
+			div(class='col-sm-8 mx-auto')
+				if currentUser == undefined
+					div(class='alert alert-danger' role='alert') #{reminder_list.message}
+				else
+					h1 #{currentUser}'s Reminders
+					div
+						nav(aria-label='breadcrumb' role='navigation')
+							ol(class='breadcrumb' style='padding:0.5rem 0rem')
+								li(class='breadcrumb-item')
+									a(href='/') Home
+								li(class='breadcrumb-item')
+									a(href='/users') All Users
+								li(class='breadcrumb-item')
+									- var url = '/users/' + userID + '/info';
+									a(href=url) #{currentUser}
+								li(class='breadcrumb-item active' aria-current='page') Reminders
+
+					table(class='table table-striped table-dark table-hover')
+						thead
+							tr
+								th(scope='col') Title 
+								th(scope='col') Action
+						tbody
+
+						if reminder_list.length > 0
+							each reminder in reminder_list
+								tr
+									td #{reminder.title}
+									td 
+										- var reminderID = reminder.id;
+										span
+											form(id='view-reminder-form-' + reminderID name='view-reminder-form-' + reminderID class='view-reminder-form' style='display:inline')
+												input(type='hidden' name='reminder-id' id='reminder-id' value=reminderID)
+												span(style='padding-right: 5px')
+													a(class='badge badge-pill badge-primary get-reminder-link' id='get-reminder-link-' + reminderID name='get-reminder-link-' + reminderID role='button' type='button' href='#' data-toggle='modal' data-target='#viewReminderModal' data-reminder-view-id=reminderID data-reminder-view-user-id=userID) View Details
+											form(id='delete-reminder-form-' + reminderID name='delete-reminder-form-' + reminderID class='delete-reminder-form' style='display:inline')
+												input(type='hidden' name='reminder-id' id='reminder-id' value=reminderID)
+												span(style='padding-right: 5px')
+													a(class='badge badge-pill badge-primary delete-reminder-link' id='delete-reminder-link-' + reminderID name='delete-reminder-link-' + reminderID role='button' type='button' href='#' data-toggle='modal' data-target='#viewReminderModal' data-reminder-delete-id=reminderID data-reminder-delete-user-id=userID) Delete
+						else
+							tr
+								td(colspan='2')
+									span #{reminder_list.message}
+
+				div(class='modal' tabindex='-1' role='dialog' id='viewReminderModal' aria-labelledby='view-modal-title' aria-hidden='true')
+					div(class='modal-dialog' role='document')
+						div(class='modal-content')
+							div(class='modal-header')
+								h5(class='modal-title' id='reminder-title') Reminder Title
+								button(type='button' class='close' data-dismiss='modal' arial-label='Close')
+									span(aria-hidden='true') &times;
+							div(class='modal-body')
+								div(class='form-group')
+									p(id='reminder-description')
+									p(id='reminder-created')
+							div(class='modal-footer')
+								button(type='button' class='btn btn-secondary' data-dismiss='modal') Close
+
+				div(class='modal' tabindex='-1' role='dialog' id='searchReminderModal' aria-labelledby='search-modal-title' aria-hidden='true')
+					div(class='modal-dialog' role='document')
+						div(class='modal-content')
+							div(class='modal-header')
+								h5(class='modal-title' id='search-result-title' name='search-result-title') Search Results
+								button(type='button' class='close' data-dismiss='modal' arial-label='Close')
+									span(aria-hidden='true') &times;
+							div(class='modal-body')
+								div(class='form-group')
+									p(id='search-modal-result-content')
+							div(class='modal-footer')
+								button(type='button' class='btn btn-secondary' data-dismiss='modal') Close

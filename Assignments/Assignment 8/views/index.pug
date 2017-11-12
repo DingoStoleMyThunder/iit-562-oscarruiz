@@ -1,0 +1,30 @@
+extends layout
+block content
+	main(role='main')
+		div(class='col-sm-8 mx-auto')
+			div(style='margin-top: 20px')
+				div(class='jumbotron' style='float:left;margin-right: 10px;')
+					h1 Users
+					p View all available users in the system
+					p 
+						a(class='btn btn-primary' href='/users') View All Users
+
+				div(class='jumbotron' style='float:left;margin-right: 10px;')
+					h1 Create User
+					p Create a new user in the system
+					p 
+						button(class='btn btn-primary' href='#' data-target='#createUserModal' data-toggle='modal') Create User
+
+
+			div(class='modal' tabindex='-1' role='dialog' id='viewUserModal' aria-labelledby='view-modal-title' aria-hidden='true')
+				div(class='modal-dialog' role='document')
+					div(class='modal-content')
+						div(class='modal-header')
+							button(type='button' class='close' data-dismiss='modal' arial-label='Close')
+								span(aria-hidden='true') &times;
+						div(class='modal-body')
+							div(class='form-group')
+								p(id='user-name-display')
+								p(id='user-email-display')
+						div(class='modal-footer')
+							button(type='button' class='btn btn-secondary' data-dismiss='modal') Close
