@@ -421,7 +421,7 @@ describe('Reminders', () => {
 	/*
 	* Test the /DELETE/:id route
 	*/
-	describe('/DELETE/:id user', () => {
+	describe('/DELETE/:id reminders', () => {
 		it('it should DELETE a user\'s reminder by the given reminder id', (withDummyData) => {
 			chai.request(server)
 				.delete('/users/0/reminders/1')
@@ -436,7 +436,7 @@ describe('Reminders', () => {
 	/*
 	* Test the /DELETE/:id route
 	*/
-	describe('/DELETE/:id user', () => {
+	describe('/DELETE/:id reminders', () => {
 		it('it should not DELETE a user\'s reminder by the given reminder id', (withDummyData) => {
 			chai.request(server)
 				.delete('/users/0/reminders/9999999999')
@@ -455,7 +455,7 @@ describe('Reminders', () => {
 	/*
 	* Test the /DELETE/:id route
 	*/
-	describe('/DELETE/:id user', () => {
+	describe('/DELETE/:id reminders', () => {
 		it('it should not DELETE a user\'s reminder by the given reminder id - user does NOT exist', (withDummyData) => {
 			chai.request(server)
 				.delete('/users/9999999999/reminders/9999999999')
@@ -474,7 +474,7 @@ describe('Reminders', () => {
 	/*
 	* Test the /DELETE/:id route
 	*/
-	describe('/DELETE/:id user', () => {
+	describe('/DELETE/:id reminders', () => {
 		it('it should not DELETE a user\'s reminder by the given reminder id - user has NO reminders', (withDummyData) => {
 			chai.request(server)
 				.delete('/users/1/reminders/9999999999')
@@ -493,7 +493,7 @@ describe('Reminders', () => {
 	/*
 	* Test the /DELETE/:id route
 	*/
-	describe('/DELETE/:id user', () => {
+	describe('/DELETE/:id reminders', () => {
 		it('it should not DELETE all of the user\'s reminders - user has NO reminders', (withDummyData) => {
 			chai.request(server)
 				.delete('/users/1/reminders/')
@@ -512,8 +512,8 @@ describe('Reminders', () => {
 	/*
 	* Test the /DELETE/:id route
 	*/
-	describe('/DELETE/:id user', () => {
-		it('it should not DELETE all of the user\'s reminders - user does NOt exist', (withDummyData) => {
+	describe('/DELETE/:id reminders', () => {
+		it('it should not DELETE all of the user\'s reminders - user does NOT exist', (withDummyData) => {
 			chai.request(server)
 				.delete('/users/9999999999/reminders/')
 				.end((err, res) => {
@@ -531,7 +531,7 @@ describe('Reminders', () => {
 	/*
 	* Test the /DELETE/:id route
 	*/
-	describe('/DELETE/:id user', () => {
+	describe('/DELETE/:id reminders', () => {
 		it('it should DELETE all of the user\'s reminders', (withDummyData) => {
 			chai.request(server)
 				.delete('/users/0/reminders/')
